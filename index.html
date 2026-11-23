@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>david&claraGBT — الذكاء الاصطناعي للمحادثة وتعديل الصور</title>
+    <link id="dynamic-favicon" rel="icon" type="image/jpeg" href="1000010454_2.jpg">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo for Arabic & Inter for English -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Marked.js for clean Markdown formatting -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'Inter', 'sans-serif'],
+                        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+                    },
+                    colors: {
+                        gemini: {
+                            darkBg: '#131314',
+                            darkSurface: '#1e1f20',
+                            darkHover: '#282a2c',
+                            darkBorder: '#333537',
+                            lightBg: '#ffffff',
+                            lightSurface: '#f0f4f9',
+                            lightHover: '#e1e5ea',
+                            lightBorder: '#dde3ea',
+                            accentBlue: '#4285f4',
+                            accentPurple: '#9b72cb',
+                            accentPink: '#d96570',
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'gradient-x': 'gradient-x 6s ease infinite',
+                    },
+                    keyframes: {
+                        'gradient-x': {
+                            '0%, 100%': { 'background-size': '200% 200%', 'background-position': 'left center' },
+                            '50%': { 'background-size': '200% 200%', 'background-position': 'right center' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(155, 114, 203, 0.3);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(155, 114, 203, 0.6);
+        }
+
+        /* Gemini Gradient Text */
+        .gemini-gradient-text {
+            background: linear-gradient(74deg, #4285f4 0%, #9b72cb 35%, #d96570 70%, #4285f4 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-x 6s ease infinite;
+        }
+
+        /* Gemini Sparkle Glow */
+        .gemini-glow {
+            box-shadow: 0 0 28px rgba(192, 192, 192, 0.22), 0 0 50px rgba(155, 114, 203, 0.14);
+        }
+
+        /* Crisp Cropped Logo Styling for 1000010454_2.jpg */
+        .brand-logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            transform: scale(1.38);
+            background-color: #000000;
+        }
+
+        /* Markdown Content Styling */
+        .markdown-body p {
+            margin-bottom: 0.75rem;
+            line-height: 1.75;
+        }
+        .markdown-body p:last-child {
+            margin-bottom: 0;
+        }
+        .markdown-body ul, .markdown-body ol {
+            margin-bottom: 0.75rem;
+            padding-inline-start: 1.5rem;
+        }
+        .markdown-body ul {
+            list-style-type: disc;
+        }
+        .markdown-body ol {
+            list-style-type: decimal;
+        }
+        .markdown-body li {
+            margin-bottom: 0.35rem;
+            line-height: 1.7;
+        }
+        .markdown-body pre {
+            background-color: #0d0e10;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            margin: 0.75rem 0;
+            direction: ltr;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .markdown-body code {
+            font-family: monospace;
+            background-color: rgba(155, 114, 203, 0.15);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.375rem;
+            font-size: 0.9em;
+        }
+        .markdown-body pre code {
+            background-color: transparent;
+            padding: 0;
+        }
+        .markdown-body strong {
+            font-weight: 700;
+        }
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 {
+            font-weight: 700;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .markdown-body h1 { font-size: 1.35rem; }
+        .markdown-body h2 { font-size: 1.2rem; }
+        .markdown-body h3 { font-size: 1.05rem; }
+
+        /* Typing Dots Animation */
+        .typing-dot {
+            animation: typingBounce 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes typingBounce {
+            0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-gemini-lightBg dark:bg-gemini-darkBg text-gray-900 dark:text-gray-100 transition-colors duration-200 flex flex-col h-screen overflow-hidden select-none sm:select-auto">
+
+    <!-- Top Header -->
+    <header class="w-full px-4 sm:px-6 py-3 flex items-center justify-between border-b border-gemini-lightBorder dark:border-gemini-darkBorder bg-gemini-lightBg/80 dark:bg-gemini-darkBg/80 backdrop-blur-md z-20 shrink-0">
+        <!-- Brand Logo & Name -->
+        <div class="flex items-center gap-2.5 cursor-pointer" onclick="resetChat()">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-zinc-400 via-purple-400 to-zinc-200 p-[1.5px] shadow-md shrink-0">
+                <div class="w-full h-full bg-black rounded-[10px] overflow-hidden flex items-center justify-center">
+                    <img src="1000010454_2.jpg" alt="david&claraGBT Logo" class="brand-logo-img" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-xs font-extrabold text-white\'>D&amp;C</span>';">
+                </div>
+            </div>
+            <div class="flex flex-col">
+                <div class="flex items-center gap-1.5">
+                    <span class="font-extrabold text-lg sm:text-xl tracking-tight gemini-gradient-text" dir="ltr">david&amp;claraGBT</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-500/20">AI</span>
+                </div>
+                <span id="header-subtitle" class="text-[11px] text-gray-500 dark:text-gray-400 hidden sm:inline">بيكلمك بالمصري ويعدل ويصمم صور بالذكاء الاصطناعي مجاناً</span>
+            </div>
+        </div>
+
+        <!-- Right Controls -->
+        <div class="flex items-center gap-2">
+            <!-- New Chat Button -->
+            <button onclick="resetChat()" title="محادثة جديدة / New Chat" class="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-gemini-lightSurface dark:bg-gemini-darkSurface hover:bg-gemini-lightHover dark:hover:bg-gemini-darkHover border border-gemini-lightBorder dark:border-gemini-darkBorder transition-all active:scale-95">
+                <i data-lucide="plus" class="w-4 h-4 text-purple-500"></i>
+                <span id="btn-new-chat" class="hidden sm:inline">محادثة جديدة</span>
+            </button>
+
+            <!-- Language Toggle (AR / EN) -->
+            <button onclick="toggleLanguage()" id="lang-toggle" title="تغيير اللغة / Switch Language" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold bg-gemini-lightSurface dark:bg-gemini-darkSurface hover:bg-gemini-lightHover dark:hover:bg-gemini-darkHover border border-gemini-lightBorder dark:border-gemini-darkBorder transition-all active:scale-95">
+                EN
+            </button>
+
+            <!-- Theme Toggle (Dark / Light) -->
+            <button onclick="toggleTheme()" id="theme-toggle" title="تغيير المظهر / Toggle Theme" class="p-2 rounded-xl bg-gemini-lightSurface dark:bg-gemini-darkSurface hover:bg-gemini-lightHover dark:hover:bg-gemini-darkHover border border-gemini-lightBorder dark:border-gemini-darkBorder transition-all active:scale-95">
+                <i data-lucide="sun" class="w-4 h-4 hidden dark:block text-amber-400"></i>
+                <i data-lucide="moon" class="w-4 h-4 block dark:hidden text-indigo-600"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Chat Container -->
+    <main id="chat-container" class="flex-1 overflow-y-auto px-4 sm:px-6 py-6 scroll-smooth">
+        <div class="max-w-3xl mx-auto w-full flex flex-col min-h-full">
+
+            <!-- Welcome Screen (Visible when chat is empty) -->
+            <div id="welcome-screen" class="my-auto py-8 flex flex-col items-center text-center transition-all duration-300">
+                <!-- Animated Hero Emblem -->
+                <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-tr from-zinc-300 via-purple-400 to-zinc-500 p-[2px] mb-6 gemini-glow shadow-2xl">
+                    <div class="w-full h-full bg-black rounded-[22px] overflow-hidden flex items-center justify-center">
+                        <img src="1000010454_2.jpg" alt="david&claraGBT Official Emblem" class="brand-logo-img" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-2xl font-extrabold text-white\'>D&amp;C</span>';">
+                    </div>
+                </div>
+
+                <h1 id="welcome-title" class="text-2xl sm:text-4xl font-extrabold mb-3 tracking-tight">
+                    أهلاً بيك في <span class="gemini-gradient-text" dir="ltr">david&amp;claraGBT</span>
+                </h1>
+                <p id="welcome-subtitle" class="text-sm sm:text-base text-gray-600 dark:text-gray-400 max-w-lg mb-8 leading-relaxed">
+                    صاحبك الذكي اللي هيرد عليك بالمصري الحلو، ويصمملك أو يعدلك أي صورة بالذكاء الاصطناعي مجاناً ١٠٠%. اختار حاجة من دول أو اكتب اللي نفسك فيه تحت:
+                </p>
+
+                <!-- Quick Starter Suggestion Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-2xl text-start">
+                    <!-- Card 1: Chat -->
+                    <button onclick="useStarter('chat')" class="group p-4 rounded-2xl bg-gemini-lightSurface dark:bg-gemini-darkSurface hover:bg-gemini-lightHover dark:hover:bg-gemini-darkHover border border-gemini-lightBorder dark:border-gemini-darkBorder transition-all flex flex-col justify-between gap-3 active:scale-[0.98]">
+                        <div class="w-9 h-9 rounded-xl bg-blue-500/15 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="message-square-sparkles" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div id="card1-title" class="font-bold text-sm mb-1">اسألني أي حاجة</div>
+                            <div id="card1-desc" class="text-xs text-gray-500 dark:text-gray-400">هرد عليك بالمصري، أساعدك في أفكار، تلخيص، أو برمجة</div>
+                        </div>
+                    </button>
+
+                    <!-- Card 2: Generate Image -->
+                    <button onclick="useStarter('generate')" class="group p-4 rounded-2xl bg-gemini-lightSurface dark:bg-gemini-darkSurface hover:bg-gemini-lightHover dark:hover:bg-gemini-darkHover border border-gemini-lightBorder dark:border-gemini-darkBorder transition-all flex flex-col justify-between gap-3 active:scale-[0.98]">
+                        <div class="w-9 h-9 rounded-xl bg-purple-500/15 text-purple-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="wand-2" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div id="card2-title" class="font-bold text-sm mb-1">ارسم صورة من خيالك</div>
+                            <div id="card2-desc" class="text-xs text-gray-500 dark:text-gray-400">قولي "ارسم قطة لابسة بدلة رائد فضاء" وهعملهالك حالاً</div>
+                        </div>
+                    </button>
+
+                    <!-- Card 3: Edit Image -->
+                    <button onclick="useStarter('edit')" class="group p-4 rounded-2xl bg-gemini-lightSurface dark:bg-gemini-darkSurface hover:bg-gemini-lightHover dark:hover:bg-gemini-darkHover border border-gemini-lightBorder dark:border-gemini-darkBorder transition-all flex flex-col justify-between gap-3 active:scale-[0.98]">
+                        <div class="w-9 h-9 rounded-xl bg-pink-500/15 text-pink-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <i data-lucide="image-plus" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div id="card3-title" class="font-bold text-sm mb-1">ارفع صورة وعدّلها</div>
+                            <div id="card3-desc" class="text-xs text-gray-500 dark:text-gray-400">ارفع صورتك وقولي أغير الخلفية أو أحولها كرتون</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Messages Stream -->
+            <div id="messages-list" class="flex flex-col gap-6 pb-4 hidden"></div>
+
+        </div>
+    </main>
+
+    <!-- Bottom Unified Input Area -->
+    <footer class="w-full px-4 sm:px-6 pb-4 pt-2 bg-gemini-lightBg dark:bg-gemini-darkBg shrink-0 z-20">
+        <div class="max-w-3xl mx-auto w-full">
+            
+            <!-- Mode Selector & Status Bar -->
+            <div class="flex items-center justify-between mb-2 px-1">
+                <div class="flex items-center gap-1.5 bg-gemini-lightSurface dark:bg-gemini-darkSurface p-1 rounded-xl border border-gemini-lightBorder dark:border-gemini-darkBorder">
+                    <button type="button" onclick="setMode('auto')" id="mode-btn-auto" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-white dark:bg-gemini-darkHover text-purple-600 dark:text-purple-300 shadow-sm flex items-center gap-1">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                        <span id="label-mode-auto">تلقائي ذكي</span>
+                    </button>
+                    <button type="button" onclick="setMode('chat')" id="mode-btn-chat" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center gap-1">
+                        <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+                        <span id="label-mode-chat">محادثة</span>
+                    </button>
+                    <button type="button" onclick="setMode('image')" id="mode-btn-image" class="px-2.5 py-1 rounded-lg text-xs font-semibold transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center gap-1">
+                        <i data-lucide="palette" class="w-3.5 h-3.5"></i>
+                        <span id="label-mode-image">توليد/تعديل صورة</span>
+                    </button>
+                </div>
+
+                <!-- Dynamic Active Mode Badge -->
+                <div id="active-mode-badge" class="text-[11px] font-medium px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/20 flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>
+                    <span id="badge-text">وضع المحادثة الذكية</span>
+                </div>
+            </div>
+
+            <!-- Main Prompt Box -->
+            <div class="relative rounded-3xl bg-gemini-lightSurface dark:bg-gemini-darkSurface border border-gemini-lightBorder dark:border-gemini-darkBorder focus-within:border-purple-500/60 focus-within:ring-2 focus-within:ring-purple-500/20 transition-all shadow-sm">
+                
+                <!-- Attached Image Preview Area -->
+                <div id="image-preview-container" class="hidden px-4 pt-3 pb-1">
+                    <div class="relative inline-block group">
+                        <img id="image-preview-thumb" src="" alt="Preview" class="h-20 w-20 object-cover rounded-2xl border-2 border-purple-500/50 shadow-md">
+                        <button type="button" onclick="clearUploadedImage()" title="إزالة الصورة / Remove Image" class="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md hover:bg-red-600 transition-transform active:scale-90">
+                            <i data-lucide="x" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <span id="edit-badge-overlay" class="absolute bottom-1 left-1 right-1 text-[9px] text-center font-bold bg-black/70 text-white rounded-md py-0.5 backdrop-blur-sm">
+                            جاهزة للتعديل
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Input Row -->
+                <div class="flex items-end gap-2 p-2.5 sm:p-3">
+                    <!-- Hidden File Input -->
+                    <input type="file" id="image-upload-input" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+                    
+                    <!-- Attach Image Button -->
+                    <button type="button" onclick="document.getElementById('image-upload-input').click()" title="رفع صورة لتعديلها / Upload Image to Edit" class="p-2.5 rounded-2xl text-gray-600 dark:text-gray-300 hover:bg-gemini-lightHover dark:hover:bg-gemini-darkHover transition-colors shrink-0 active:scale-95">
+                        <i data-lucide="image-plus" class="w-5 h-5 text-purple-500"></i>
+                    </button>
+
+                    <!-- Auto-expanding Textarea -->
+                    <textarea id="prompt-input" rows="1" placeholder="اكتب رسالتك هنا بالمصري، أو اطلب رسم أو تعديل صورة..." class="w-full bg-transparent border-0 focus:ring-0 focus:outline-none resize-none py-2 px-1 text-sm sm:text-base max-h-36 leading-relaxed placeholder-gray-400 dark:placeholder-gray-500" oninput="autoResizeTextarea(this); updateModeIndicator();" onkeydown="handleKeyDown(event)"></textarea>
+
+                    <!-- Send Button -->
+                    <button type="button" id="send-button" onclick="handleSend()" disabled class="p-2.5 rounded-2xl bg-gradient-to-tr from-blue-600 to-purple-600 text-white disabled:opacity-40 disabled:cursor-not-allowed hover:opacity-95 transition-all shrink-0 shadow-md active:scale-95">
+                        <i data-lucide="send" class="w-5 h-5 rtl:rotate-180"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Footer Note -->
+            <div class="text-center mt-2">
+                <p id="footer-disclaimer" class="text-[11px] text-gray-400 dark:text-gray-500">
+                    david&amp;claraGBT شغال مجاناً ١٠٠% • بيكلمك بالمصري ويصمم ويعدّل الصور بدقة عالية
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification Container (Replaces alert()) -->
+    <div id="toast-container" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <script>
+        // =========================================================================
+        // 1. STATE MANAGEMENT & CONFIGURATION
+        // =========================================================================
+        const apiKey = ""; // Runtime-provided API Key
+
+        const state = {
+            lang: 'ar', // 'ar' or 'en'
+            theme: 'dark', // 'dark' or 'light'
+            mode: 'auto', // 'auto', 'chat', 'image'
+            isLoading: false,
+            chatHistory: [], // Stores Gemini text chat history
+            uploadedImage: null, // { base64: string, mimeType: string, dataUrl: string }
+        };
+
+        // UI Translations Dictionary
+        const i18n = {
+            ar: {
+                subtitle: "بيكلمك بالمصري ويعدل ويصمم صور بالذكاء الاصطناعي مجاناً",
+                newChat: "محادثة جديدة",
+                welcomeTitle: 'أهلاً بيك في <span class="gemini-gradient-text" dir="ltr">david&amp;claraGBT</span>',
+                welcomeSubtitle: "صاحبك الذكي اللي هيرد عليك بالمصري الحلو، ويصمملك أو يعدلك أي صورة بالذكاء الاصطناعي مجاناً ١٠٠%. اختار حاجة من دول أو اكتب اللي نفسك فيه تحت:",
+                card1Title: "اسألني أي حاجة",
+                card1Desc: "هرد عليك بالمصري، أساعدك في أفكار، تلخيص، أو برمجة",
+                card2Title: "ارسم صورة من خيالك",
+                card2Desc: 'قولي "ارسم قطة لابسة بدلة رائد فضاء" وهعملهالك حالاً',
+                card3Title: "ارفع صورة وعدّلها",
+                card3Desc: "ارفع صورتك وقولي أغير الخلفية أو أحولها كرتون",
+                modeAuto: "تلقائي ذكي",
+                modeChat: "محادثة",
+                modeImage: "توليد/تعديل صورة",
+                badgeChat: "وضع المحادثة الذكية بالمصري",
+                badgeGenerate: "وضع رسم وتوليد الصور بالذكاء الاصطناعي",
+                badgeEdit: "وضع تعديل الصورة المرفوعة",
+                placeholderDefault: "اكتب رسالتك هنا بالمصري، أو اطلب رسم أو تعديل صورة...",
+                placeholderEdit: "قولي عايز تعدل إيه في الصورة (مثلاً: خلي الخلفية في الفضاء، حولها كرتون)...",
+                placeholderGenerate: "اوصف الصورة اللي عايزني أرسمهالك بالتفصيل...",
+                disclaimer: "david&claraGBT شغال مجاناً ١٠٠% • بيكلمك بالمصري ويصمم ويعدّل الصور بدقة عالية",
+                editOverlay: "جاهزة للتعديل",
+                copyBtn: "نسخ",
+                copiedBtn: "اتنسخ!",
+                downloadBtn: "تحميل الصورة",
+                editThisBtn: "عدّل الصورة دي",
+                generatingImgText: "ثواني وبرسملك الصورة بأعلى جودة...",
+                editingImgText: "ثواني وبظبطلك التعديل على الصورة...",
+                errorGeneric: "معلش حصلت مشكلة بسيطة في الاتصال، جرب تبعت تاني وهتشتغل معاك زي الفل!",
+                errorImage: "معلش مقدرتش أطلع الصورة المرة دي، جرب توصفها بطريقة تانية أو أسهل.",
+                imageLoadedToast: "الصورة اترفعت! اكتب التعديل اللي عايزه واضغط إرسال.",
+                starterChatPrompt: "أهلاً! قولي تقدر تساعدني في إيه النهاردة؟",
+                starterGenPrompt: "ارسم صورة سينمائية خرافية لقطة مصرية فرعونية لابسة نظارة شمس في الفضاء بألوان نيون مبهرة"
+            },
+            en: {
+                subtitle: "Free AI Chat & Image Editing Studio",
+                newChat: "New Chat",
+                welcomeTitle: 'Welcome to <span class="gemini-gradient-text" dir="ltr">david&amp;claraGBT</span>',
+                welcomeSubtitle: "Your fast, 100% free AI assistant for smart conversations, image generation, and photo editing. Choose an option or start typing below:",
+                card1Title: "Ask me anything",
+                card1Desc: "Smart answers, summaries, writing, and coding help",
+                card2Title: "Generate AI Image",
+                card2Desc: 'Describe anything like "draw a cat in space" and see it instantly',
+                card3Title: "Upload & Edit Photo",
+                card3Desc: "Upload any image and ask to change backgrounds or styles",
+                modeAuto: "Smart Auto",
+                modeChat: "Chat",
+                modeImage: "Create/Edit Image",
+                badgeChat: "Smart AI Chat Mode",
+                badgeGenerate: "AI Image Generation Mode",
+                badgeEdit: "AI Photo Editing Mode",
+                placeholderDefault: "Type a message, or ask to draw or edit an image...",
+                placeholderEdit: "Describe how you want to edit the uploaded image...",
+                placeholderGenerate: "Describe the image you want to generate in detail...",
+                disclaimer: "david&claraGBT is 100% free • Supports smart chat, image creation & photo editing",
+                editOverlay: "Ready to Edit",
+                copyBtn: "Copy",
+                copiedBtn: "Copied!",
+                downloadBtn: "Download",
+                editThisBtn: "Edit Image",
+                generatingImgText: "Designing and generating your AI image...",
+                editingImgText: "Applying AI edits to your photo...",
+                errorGeneric: "Sorry, a connection issue occurred. Please try again.",
+                errorImage: "Could not generate the image this time. Try rephrasing your prompt.",
+                imageLoadedToast: "Image attached! Describe your edit and press Send.",
+                starterChatPrompt: "Hi! What can you help me with today?",
+                starterGenPrompt: "A cinematic digital art of a cute futuristic cat wearing glowing neon glasses in space, ultra detailed"
+            }
+        };
+
+        // Initialize Icons & Cropped Favicon on Load
+        window.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            updateUITexts();
+            updateModeIndicator();
+            generateCroppedFavicon();
+        });
+
+        // Crop center square of 1000010454_2.jpg for crisp browser tab favicon
+        function generateCroppedFavicon() {
+            const img = new Image();
+            img.onload = function() {
+                try {
+                    const canvas = document.createElement('canvas');
+                    const size = 128;
+                    canvas.width = size;
+                    canvas.height = size;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#000000';
+                    ctx.fillRect(0, 0, size, size);
+
+                    const minSide = Math.min(img.width, img.height) * 0.72;
+                    const sx = (img.width - minSide) / 2;
+                    const sy = (img.height - minSide) / 2;
+                    ctx.drawImage(img, sx, sy, minSide, minSide, 0, 0, size, size);
+
+                    const faviconLink = document.getElementById('dynamic-favicon');
+                    if (faviconLink) {
+                        faviconLink.href = canvas.toDataURL('image/png');
+                    }
+                } catch (e) {
+                    // Keep default href fallback if canvas tainting occurs
+                }
+            };
+            img.src = '1000010454_2.jpg';
+        }
+
+        // Helper for consistent AI Avatar HTML across messages
+        function getAIAvatarHtml(isPulsing = false) {
+            return `
+                <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-zinc-400 via-purple-400 to-zinc-200 p-[1.5px] shrink-0 mt-0.5 shadow-sm ${isPulsing ? 'animate-pulse' : ''}">
+                    <div class="w-full h-full bg-black rounded-[10px] overflow-hidden flex items-center justify-center">
+                        <img src="1000010454_2.jpg" alt="D&C" class="brand-logo-img" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\'text-[10px] font-bold text-white\'>D&amp;C</span>';">
+                    </div>
+                </div>
+            `;
+        }
+
+        // =========================================================================
+        // 2. THEME & LANGUAGE CONTROLS
+        // =========================================================================
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                state.theme = 'light';
+            } else {
+                html.classList.add('dark');
+                state.theme = 'dark';
+            }
+        }
+
+        function toggleLanguage() {
+            state.lang = state.lang === 'ar' ? 'en' : 'ar';
+            const html = document.documentElement;
+            html.lang = state.lang;
+            html.dir = state.lang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('lang-toggle').textContent = state.lang === 'ar' ? 'EN' : 'عربي';
+            updateUITexts();
+            updateModeIndicator();
+        }
+
+        function updateUITexts() {
+            const t = i18n[state.lang];
+            document.getElementById('header-subtitle').textContent = t.subtitle;
+            document.getElementById('btn-new-chat').textContent = t.newChat;
+            document.getElementById('welcome-title').innerHTML = t.welcomeTitle;
+            document.getElementById('welcome-subtitle').textContent = t.welcomeSubtitle;
+            document.getElementById('card1-title').textContent = t.card1Title;
+            document.getElementById('card1-desc').textContent = t.card1Desc;
+            document.getElementById('card2-title').textContent = t.card2Title;
+            document.getElementById('card2-desc').textContent = t.card2Desc;
+            document.getElementById('card3-title').textContent = t.card3Title;
+            document.getElementById('card3-desc').textContent = t.card3Desc;
+            document.getElementById('label-mode-auto').textContent = t.modeAuto;
+            document.getElementById('label-mode-chat').textContent = t.modeChat;
+            document.getElementById('label-mode-image').textContent = t.modeImage;
+            document.getElementById('footer-disclaimer').textContent = t.disclaimer;
+            document.getElementById('edit-badge-overlay').textContent = t.editOverlay;
+        }
+
+        // =========================================================================
+        // 3. MODE DETECTION & INPUT CONTROLS
+        // =========================================================================
+        function setMode(newMode) {
+            state.mode = newMode;
+            ['auto', 'chat', 'image'].forEach(m => {
+                const btn = document.getElementById(`mode-btn-${m}`);
+                if (m === newMode) {
+                    btn.className = "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all bg-white dark:bg-gemini-darkHover text-purple-600 dark:text-purple-300 shadow-sm flex items-center gap-1";
+                } else {
+                    btn.className = "px-2.5 py-1 rounded-lg text-xs font-semibold transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center gap-1";
+                }
+            });
+            updateModeIndicator();
+            document.getElementById('prompt-input').focus();
+        }
+
+        // Intelligently detect if user wants to generate an image when in 'auto' mode
+        function detectIntent(text) {
+            if (state.uploadedImage) return 'edit';
+            if (state.mode === 'chat') return 'chat';
+            if (state.mode === 'image') return 'generate';
+
+            const lower = text.trim().toLowerCase();
+            const imageTriggers = [
+                'ارسم', 'رسم', 'ارسمل', 'صمم صورة', 'صمملي صورة', 'توليد صورة', 'انشئ صورة', 'أنشئ صورة',
+                'اعمل صورة', 'اعملي صورة', 'اعمللي صورة', 'صورة ل', 'صوره ل', 'تخيل صورة', 'ولد صورة', 'عايز صورة',
+                'draw ', 'generate an image', 'generate image', 'create an image', 'create image',
+                'paint ', 'illustrate ', 'render ', 'make an image', 'picture of ', 'image of '
+            ];
+
+            for (const trigger of imageTriggers) {
+                if (lower.startsWith(trigger) || lower.includes(trigger)) {
+                    return 'generate';
+                }
+            }
+            return 'chat';
+        }
+
+        function updateModeIndicator() {
+            const input = document.getElementById('prompt-input');
+            const sendBtn = document.getElementById('send-button');
+            const badgeText = document.getElementById('badge-text');
+            const badgeContainer = document.getElementById('active-mode-badge');
+            const t = i18n[state.lang];
+
+            const text = input.value.trim();
+            sendBtn.disabled = state.isLoading || (text.length === 0 && !state.uploadedImage);
+
+            const intent = detectIntent(text);
+
+            if (intent === 'edit') {
+                badgeText.textContent = t.badgeEdit;
+                badgeContainer.className = "text-[11px] font-medium px-2.5 py-1 rounded-full bg-pink-500/15 text-pink-600 dark:text-pink-300 border border-pink-500/25 flex items-center gap-1.5";
+                input.placeholder = t.placeholderEdit;
+            } else if (intent === 'generate') {
+                badgeText.textContent = t.badgeGenerate;
+                badgeContainer.className = "text-[11px] font-medium px-2.5 py-1 rounded-full bg-purple-500/15 text-purple-600 dark:text-purple-300 border border-purple-500/25 flex items-center gap-1.5";
+                input.placeholder = t.placeholderGenerate;
+            } else {
+                badgeText.textContent = t.badgeChat;
+                badgeContainer.className = "text-[11px] font-medium px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/20 flex items-center gap-1.5";
+                input.placeholder = t.placeholderDefault;
+            }
+        }
+
+        function autoResizeTextarea(el) {
+            el.style.height = 'auto';
+            el.style.height = Math.min(el.scrollHeight, 144) + 'px';
+        }
+
+        function handleKeyDown(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (!document.getElementById('send-button').disabled) {
+                    handleSend();
+                }
+            }
+        }
+
+        function useStarter(type) {
+            const t = i18n[state.lang];
+            const input = document.getElementById('prompt-input');
+            if (type === 'chat') {
+                setMode('chat');
+                input.value = t.starterChatPrompt;
+                autoResizeTextarea(input);
+                updateModeIndicator();
+                handleSend();
+            } else if (type === 'generate') {
+                setMode('image');
+                input.value = t.starterGenPrompt;
+                autoResizeTextarea(input);
+                updateModeIndicator();
+                handleSend();
+            } else if (type === 'edit') {
+                document.getElementById('image-upload-input').click();
+            }
+        }
+
+        // =========================================================================
+        // 4. IMAGE UPLOAD & PREVIEW HANDLING
+        // =========================================================================
+        function handleImageUpload(event) {
+            const file = event.target.files?.[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                showToast(state.lang === 'ar' ? 'يرجى اختيار ملف صورة صالح' : 'Please select a valid image file', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const dataUrl = e.target.result;
+                // Extract base64 content without data URI prefix
+                const base64Data = dataUrl.split(',')[1];
+                setUploadedImage(base64Data, file.type, dataUrl);
+                showToast(i18n[state.lang].imageLoadedToast, 'success');
+            };
+            reader.readAsDataURL(file);
+            event.target.value = ''; // Reset input so same file can be selected again
+        }
+
+        function setUploadedImage(base64, mimeType, dataUrl) {
+            state.uploadedImage = { base64, mimeType, dataUrl };
+            document.getElementById('image-preview-thumb').src = dataUrl;
+            document.getElementById('image-preview-container').classList.remove('hidden');
+            updateModeIndicator();
+            document.getElementById('prompt-input').focus();
+        }
+
+        function clearUploadedImage() {
+            state.uploadedImage = null;
+            document.getElementById('image-preview-thumb').src = '';
+            document.getElementById('image-preview-container').classList.add('hidden');
+            updateModeIndicator();
+        }
+
+        // Allow user to click "Edit Image" on any generated/edited image in chat
+        function loadGeneratedImageForEditing(dataUrl) {
+            const matches = dataUrl.match(/^data:(.+);base64,(.+)$/);
+            if (matches && matches.length === 3) {
+                setUploadedImage(matches[2], matches[1], dataUrl);
+                showToast(i18n[state.lang].imageLoadedToast, 'success');
+            }
+        }
+
+        // =========================================================================
+        // 5. GEMINI API CALLS WITH EXPONENTIAL BACKOFF
+        // =========================================================================
+        async function fetchWithRetry(url, payload, maxRetries = 4) {
+            let delay = 1000;
+            for (let attempt = 0; attempt <= maxRetries; attempt++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        const errData = await response.json().catch(() => ({}));
+                        throw new Error(errData?.error?.message || `HTTP ${response.status}`);
+                    }
+                    return await response.json();
+                } catch (err) {
+                    if (attempt === maxRetries) throw err;
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                    delay *= 2;
+                }
+            }
+        }
+
+        // A. Text Chat via gemini-3-flash-preview (with warm Egyptian Arabic persona)
+        async function callGeminiChat(userText) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            state.chatHistory.push({
+                role: 'user',
+                parts: [{ text: userText }]
+            });
+
+            const payload = {
+                contents: state.chatHistory,
+                systemInstruction: {
+                    parts: [{
+                        text: "You are david&claraGBT, a brilliant, warm, and super helpful AI assistant inspired by Google Gemini. CRITICAL LANGUAGE RULE: Whenever the user writes in Arabic, you MUST reply in natural, friendly, engaging, and sweet Egyptian Arabic (اللهجة المصرية الحلوة والطبيعية والودودة) — use warm Egyptian expressions naturally while keeping technical info clear, smart, and accurate. If the user writes in English, reply in clear, friendly English. Format your answers cleanly using Markdown (bullet points, bold text, code blocks) when helpful."
+                    }]
+                }
+            };
+
+            const result = await fetchWithRetry(url, payload);
+            const replyText = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (!replyText) {
+                state.chatHistory.pop();
+                throw new Error("Empty response from Gemini");
+            }
+
+            state.chatHistory.push({
+                role: 'model',
+                parts: [{ text: replyText }]
+            });
+
+            return replyText;
+        }
+
+        // B. Text-to-Image Generation via gemini-3.1-flash-image
+        async function callGeminiImageGenerate(promptText) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{
+                    role: 'user',
+                    parts: [{ text: promptText }]
+                }],
+                generationConfig: {
+                    responseModalities: ['IMAGE']
+                }
+            };
+
+            const result = await fetchWithRetry(url, payload);
+            const part = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+
+            if (!part || !part.inlineData?.data) {
+                throw new Error("No image returned from model");
+            }
+
+            const mime = part.inlineData.mimeType || 'image/png';
+            return `data:${mime};base64,${part.inlineData.data}`;
+        }
+
+        // C. Image-to-Image Editing via gemini-3.1-flash-image
+        async function callGeminiImageEdit(promptText, base64Image, mimeType) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-image:generateContent?key=${apiKey}`;
+
+            const effectivePrompt = promptText.trim() || (state.lang === 'ar' ? "حسن جودة هذه الصورة واجعلها أكثر جمالاً وإبهاراً" : "Enhance this image and make it look stunning");
+
+            const payload = {
+                contents: [{
+                    role: 'user',
+                    parts: [
+                        { text: effectivePrompt },
+                        {
+                            inlineData: {
+                                mimeType: mimeType,
+                                data: base64Image
+                            }
+                        }
+                    ]
+                }],
+                generationConfig: {
+                    responseModalities: ['TEXT', 'IMAGE']
+                }
+            };
+
+            const result = await fetchWithRetry(url, payload);
+            const parts = result?.candidates?.[0]?.content?.parts || [];
+            const imagePart = parts.find(p => p.inlineData);
+            const textPart = parts.find(p => p.text);
+
+            if (!imagePart || !imagePart.inlineData?.data) {
+                throw new Error("No edited image returned from model");
+            }
+
+            const outMime = imagePart.inlineData.mimeType || 'image/png';
+            return {
+                imageUrl: `data:${outMime};base64,${imagePart.inlineData.data}`,
+                caption: textPart?.text || ''
+            };
+        }
+
+        // =========================================================================
+        // 6. MAIN SEND HANDLER & CHAT UI RENDERING
+        // =========================================================================
+        async function handleSend() {
+            if (state.isLoading) return;
+
+            const inputEl = document.getElementById('prompt-input');
+            const rawText = inputEl.value.trim();
+            const attachedImg = state.uploadedImage ? { ...state.uploadedImage } : null;
+
+            if (!rawText && !attachedImg) return;
+
+            const intent = detectIntent(rawText);
+
+            // Switch from Welcome screen to Messages view
+            document.getElementById('welcome-screen').classList.add('hidden');
+            const messagesList = document.getElementById('messages-list');
+            messagesList.classList.remove('hidden');
+
+            // Render User Message Bubble
+            appendUserMessage(rawText, attachedImg?.dataUrl);
+
+            // Clear input & attached preview
+            inputEl.value = '';
+            inputEl.style.height = 'auto';
+            clearUploadedImage();
+
+            state.isLoading = true;
+            updateModeIndicator();
+
+            // Render AI Loading Indicator
+            const loadingId = appendLoadingMessage(intent);
+            scrollToBottom();
+
+            try {
+                if (intent === 'edit' && attachedImg) {
+                    const { imageUrl, caption } = await callGeminiImageEdit(rawText, attachedImg.base64, attachedImg.mimeType);
+                    removeElement(loadingId);
+                    appendAIImageMessage(imageUrl, caption || (state.lang === 'ar' ? 'اتفضّل، عدّلتلك الصورة زي ما طلبت بالظبط ✨' : 'Image edited successfully ✨'));
+                } else if (intent === 'generate') {
+                    const imageUrl = await callGeminiImageGenerate(rawText);
+                    removeElement(loadingId);
+                    appendAIImageMessage(imageUrl, state.lang === 'ar' ? 'اتفضّل، رسمتلك الصورة بالذكاء الاصطناعي ✨' : 'Generated with AI ✨');
+                } else {
+                    const replyText = await callGeminiChat(rawText);
+                    removeElement(loadingId);
+                    appendAITextMessage(replyText);
+                }
+            } catch (error) {
+                console.error("david&claraGBT Error:", error);
+                removeElement(loadingId);
+                const errMsg = (intent === 'generate' || intent === 'edit')
+                    ? i18n[state.lang].errorImage
+                    : i18n[state.lang].errorGeneric;
+                appendErrorMessage(errMsg);
+            } finally {
+                state.isLoading = false;
+                updateModeIndicator();
+                scrollToBottom();
+            }
+        }
+
+        function appendUserMessage(text, imageUrl = null) {
+            const list = document.getElementById('messages-list');
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex justify-end w-full animate-fadeIn';
+
+            let imageHtml = '';
+            if (imageUrl) {
+                imageHtml = `
+                    <div class="mb-2 overflow-hidden rounded-2xl border border-white/20 max-w-[240px]">
+                        <img src="${imageUrl}" alt="Uploaded" class="w-full h-auto object-cover">
+                    </div>
+                `;
+            }
+
+            const escapedText = escapeHtml(text).replace(/\n/g, '<br>');
+
+            wrapper.innerHTML = `
+                <div class="max-w-[85%] sm:max-w-[75%] rounded-3xl rounded-te-md px-4 py-3 bg-gemini-lightSurface dark:bg-gemini-darkSurface border border-gemini-lightBorder dark:border-gemini-darkBorder text-gray-900 dark:text-gray-100 shadow-sm">
+                    ${imageHtml}
+                    ${escapedText ? `<div class="text-sm sm:text-base leading-relaxed break-words">${escapedText}</div>` : ''}
+                </div>
+            `;
+            list.appendChild(wrapper);
+        }
+
+        function appendLoadingMessage(intent) {
+            const list = document.getElementById('messages-list');
+            const id = 'loading-' + Date.now();
+            const wrapper = document.createElement('div');
+            wrapper.id = id;
+            wrapper.className = 'flex items-start gap-3 w-full';
+
+            const t = i18n[state.lang];
+            let statusLabel = '';
+            if (intent === 'generate') statusLabel = t.generatingImgText;
+            else if (intent === 'edit') statusLabel = t.editingImgText;
+
+            wrapper.innerHTML = `
+                ${getAIAvatarHtml(true)}
+                <div class="flex flex-col gap-2 pt-1.5">
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-blue-500 typing-dot"></span>
+                        <span class="w-2 h-2 rounded-full bg-purple-500 typing-dot"></span>
+                        <span class="w-2 h-2 rounded-full bg-pink-500 typing-dot"></span>
+                    </div>
+                    ${statusLabel ? `<span class="text-xs font-medium text-purple-600 dark:text-purple-300 animate-pulse">${statusLabel}</span>` : ''}
+                </div>
+            `;
+            list.appendChild(wrapper);
+            lucide.createIcons();
+            return id;
+        }
+
+        function appendAITextMessage(markdownText) {
+            const list = document.getElementById('messages-list');
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex items-start gap-3 w-full group';
+
+            const renderedHtml = typeof marked !== 'undefined' ? marked.parse(markdownText) : escapeHtml(markdownText);
+            const t = i18n[state.lang];
+
+            wrapper.innerHTML = `
+                ${getAIAvatarHtml(false)}
+                <div class="flex-1 min-w-0">
+                    <div class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1" dir="ltr">david&amp;claraGBT</div>
+                    <div class="markdown-body text-sm sm:text-base text-gray-800 dark:text-gray-100 break-words">
+                        ${renderedHtml}
+                    </div>
+                    <div class="mt-2 flex items-center gap-2">
+                        <button type="button" onclick="copyMessageText(this)" data-raw="${escapeAttr(markdownText)}" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium text-gray-500 dark:text-gray-400 hover:bg-gemini-lightSurface dark:hover:bg-gemini-darkSurface hover:text-gray-900 dark:hover:text-white transition-colors">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span>${t.copyBtn}</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+            list.appendChild(wrapper);
+            lucide.createIcons();
+        }
+
+        function appendAIImageMessage(imageDataUrl, captionText) {
+            const list = document.getElementById('messages-list');
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex items-start gap-3 w-full';
+            const t = i18n[state.lang];
+            const filename = `david-claraGBT-${Date.now()}.png`;
+
+            wrapper.innerHTML = `
+                ${getAIAvatarHtml(false)}
+                <div class="flex-1 min-w-0">
+                    <div class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1.5" dir="ltr">david&amp;claraGBT</div>
+                    <div class="inline-block max-w-full sm:max-w-md rounded-2xl overflow-hidden border border-gemini-lightBorder dark:border-gemini-darkBorder bg-gemini-lightSurface dark:bg-gemini-darkSurface shadow-lg">
+                        <img src="${imageDataUrl}" alt="AI Result" class="w-full h-auto block">
+                        <div class="p-3 flex flex-wrap items-center justify-between gap-2 border-t border-gemini-lightBorder dark:border-gemini-darkBorder">
+                            <span class="text-xs text-gray-600 dark:text-gray-300 font-medium">${escapeHtml(captionText)}</span>
+                            <div class="flex items-center gap-2">
+                                <button type="button" onclick="loadGeneratedImageForEditing('${imageDataUrl}')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-500/15 text-purple-600 dark:text-purple-300 hover:bg-purple-500/25 transition-all active:scale-95">
+                                    <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
+                                    <span>${t.editThisBtn}</span>
+                                </button>
+                                <a href="${imageDataUrl}" download="${filename}" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-95 transition-all shadow-sm active:scale-95">
+                                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                                    <span>${t.downloadBtn}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            list.appendChild(wrapper);
+            lucide.createIcons();
+        }
+
+        function appendErrorMessage(errorText) {
+            const list = document.getElementById('messages-list');
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex items-start gap-3 w-full';
+            wrapper.innerHTML = `
+                <div class="w-8 h-8 rounded-xl bg-red-500/15 text-red-500 flex items-center justify-center shrink-0 mt-0.5">
+                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                </div>
+                <div class="rounded-2xl px-4 py-3 bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-300 text-sm">
+                    ${escapeHtml(errorText)}
+                </div>
+            `;
+            list.appendChild(wrapper);
+            lucide.createIcons();
+        }
+
+        // =========================================================================
+        // 7. UTILITIES (COPY, RESET, TOAST, ESCAPE)
+        // =========================================================================
+        function copyMessageText(btn) {
+            const rawText = btn.getAttribute('data-raw');
+            const tempTextArea = document.createElement('textarea');
+            tempTextArea.value = rawText;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempTextArea);
+
+            const t = i18n[state.lang];
+            const span = btn.querySelector('span');
+            span.textContent = t.copiedBtn;
+            setTimeout(() => {
+                span.textContent = t.copyBtn;
+            }, 2000);
+        }
+
+        function resetChat() {
+            if (state.isLoading) return;
+            state.chatHistory = [];
+            clearUploadedImage();
+            document.getElementById('messages-list').innerHTML = '';
+            document.getElementById('messages-list').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            setMode('auto');
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = type === 'error'
+                ? 'bg-red-600 text-white'
+                : 'bg-gray-900 dark:bg-white text-white dark:text-gray-900';
+
+            toast.className = `px-4 py-2 rounded-full text-xs font-semibold shadow-lg transition-all duration-300 ${colors}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function removeElement(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('chat-container');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function escapeAttr(str) {
+            if (!str) return '';
+            return str.replace(/"/g, '&quot;').replace(/\n/g, '&#10;');
+        }
+    </script>
+</body>
+</html>
